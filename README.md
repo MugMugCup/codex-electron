@@ -5,7 +5,8 @@ using the `arp` command. Only the first 10 results are shown.
 
 ## Setup
 
-Install dependencies and run the application:
+Install dependencies and run the application. The app uses `iconv-lite` to
+handle output encoding from the `arp` command:
 
 ```bash
 npm install

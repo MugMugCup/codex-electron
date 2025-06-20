@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const { exec } = require('child_process');
+const iconv = require('iconv-lite');
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -19,12 +20,13 @@ app.whenReady().then(createWindow);
 
 ipcMain.handle('scan-network', async () => {
   return new Promise((resolve) => {
-    exec('arp -a', (err, stdout) => {
+    exec('arp -a', { encoding: 'buffer' }, (err, stdout) => {
       if (err) {
         resolve([]);
         return;
       }
-      const lines = stdout.split('\n').filter(Boolean);
+      const decoded = iconv.decode(stdout, 'cp932');
+      const lines = decoded.split('\n').filter(Boolean);
       resolve(lines.slice(0, 10));
     });
   });
