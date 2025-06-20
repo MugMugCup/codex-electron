@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Network Devices</title>
+</head>
+<body>
+  <h1>Network Devices</h1>
+  <button id="scan">Scan</button>
+  <pre id="output"></pre>
+  <script>
+    const button = document.getElementById('scan');
+    const output = document.getElementById('output');
+    button.addEventListener('click', async () => {
+      const devices = await window.network.scan();
+      output.textContent = devices.join('\n');
+    });
+  </script>
+</body>
+</html>
