@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const { exec } = require('child_process');
+const iconv = require('iconv-lite');
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -19,13 +20,22 @@ app.whenReady().then(createWindow);
 
 ipcMain.handle('scan-network', async () => {
   return new Promise((resolve) => {
-    exec('arp -a', (err, stdout) => {
+    exec('arp -a', { encoding: 'buffer' }, (err, stdout) => {
       if (err) {
         resolve([]);
         return;
       }
-      const lines = stdout.split('\n').filter(Boolean);
-      resolve(lines.slice(0, 10));
+      const decoded = iconv.decode(stdout, 'cp932');
+      const lines = decoded.split('\n').filter(Boolean);
+      const devices = [];
+      for (const line of lines) {
+        const m = line.match(/(\d+\.\d+\.\d+\.\d+).*?((?:[0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2})/);
+        if (m) {
+          devices.push({ ip: m[1], mac: m[2] });
+          if (devices.length === 10) break;
+        }
+      }
+      resolve(devices);
     });
   });
 });

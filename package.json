@@ -13,5 +13,8 @@
   "type": "commonjs",
   "devDependencies": {
     "electron": "^36.5.0"
+  },
+  "dependencies": {
+    "iconv-lite": "^0.6.3"
   }
 }
